@@ -5,10 +5,6 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 # Create your models here.
 
 
-class Menu(models.Model):
-    pass
-
-
 class Restaurant(models.Model):
     VEGAN = "Vegan"
     VEGETARIAN = "Veg"
@@ -25,7 +21,6 @@ class Restaurant(models.Model):
     opening_time = models.TimeField()
     closing_time = models.TimeField()
     cost_for_two = models.CharField(max_length=4)
-    menu = models.ForeignKey(Menu, on_delete=models.CASCADE)
     door_no = models.CharField(max_length=7)
     street = models.CharField(max_length=50)
     location = models.CharField(max_length=50)
@@ -35,6 +30,15 @@ class Restaurant(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Menu(models.Model):
+    restaurant = models.OneToOneField(
+        Restaurant, on_delete=models.CASCADE, related_name="menus"
+    )
+
+    def __str__(self):
+        return self.restaurant.name
 
 
 class Item(models.Model):
@@ -55,7 +59,9 @@ class Item(models.Model):
 
 
 class Photo(models.Model):
-    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
+    restaurant = models.ForeignKey(
+        Restaurant, on_delete=models.CASCADE, related_name="photos"
+    )
     photo = models.ImageField(upload_to="pictures/")
 
     def __str__(self):
@@ -88,7 +94,9 @@ class UserVisited(models.Model):
 
 class Review(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
+    restaurant = models.ForeignKey(
+        Restaurant, on_delete=models.CASCADE, related_name="reviews"
+    )
     rating = models.IntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(5)]
     )
