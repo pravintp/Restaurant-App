@@ -9,10 +9,6 @@ class Menu(models.Model):
     pass
 
 
-class Location(models.Model):
-    name = models.CharField(max_length=50)
-
-
 class Restaurant(models.Model):
     VEGAN = "Vegan"
     VEGETARIAN = "Veg"
@@ -32,26 +28,45 @@ class Restaurant(models.Model):
     menu = models.ForeignKey(Menu, on_delete=models.CASCADE)
     door_no = models.CharField(max_length=7)
     street = models.CharField(max_length=50)
-    location = models.ForeignKey(Location, on_delete=models.CASCADE)
+    location = models.CharField(max_length=50)
     pincode = models.CharField(max_length=6)
     longitude = models.DecimalField(max_digits=9, decimal_places=6)
     latitude = models.DecimalField(max_digits=9, decimal_places=6)
 
+    def __str__(self):
+        return self.name
+
 
 class Item(models.Model):
+    VEGETARIAN = "Veg"
+    NON_VEGETARIAN = "Non-veg"
+
+    FOOD_TYPE_CHOICES = [
+        (VEGETARIAN, "Vegetarian"),
+        (NON_VEGETARIAN, "Non-Vegetarian"),
+    ]
     name = models.CharField(max_length=50)
-    whether_veg = models.BooleanField()
+    type = models.CharField(max_length=7, choices=FOOD_TYPE_CHOICES)
     cost = models.DecimalField(max_digits=6, decimal_places=2)
     menu = models.ForeignKey(Menu, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
 
 
 class Photo(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
     photo = models.ImageField(upload_to="pictures/")
 
+    def __str__(self):
+        return self.restaurant.name
+
 
 class Cuisine(models.Model):
     name = models.CharField(max_length=30)
+
+    def __str__(self):
+        return self.name
 
 
 class RestaurantHasCuisine(models.Model):
