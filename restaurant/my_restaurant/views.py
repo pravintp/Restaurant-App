@@ -1,5 +1,5 @@
 from django.db.models import Count, Avg
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 from .models import Restaurant, Photo
 
@@ -15,4 +15,12 @@ def restaurant_list_view(request):
                 nreviews=Count("reviews"), avg=Avg("reviews__rating")
             )
         },
+    )
+
+
+def restaurant_detail_view(request, pk):
+    return render(
+        request,
+        "my_restaurant/detail.html",
+        {"restaurant": get_object_or_404(Restaurant, pk=pk)},
     )

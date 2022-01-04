@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 
+from django.urls import reverse
+
 # Create your models here.
 
 
@@ -30,6 +32,9 @@ class Restaurant(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse("restaurants:restaurant detail", args=[self.id])
 
 
 class Menu(models.Model):
